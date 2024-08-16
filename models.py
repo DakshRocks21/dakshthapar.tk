@@ -4,12 +4,11 @@ from flask_login import UserMixin
 
 db = SQLAlchemy()
 
-class User(UserMixin, db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
-    urls = db.relationship('URLMapping', backref='user', lazy=True)
-
+    urls = db.relationship('UrlMapping', backref='user', lazy=True, cascade="all, delete-orphan")
 class URLMapping(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     short_url = db.Column(db.String(6), unique=True, nullable=False)

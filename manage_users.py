@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash
-from models import db, User
+from models import URLMapping, db, User
 
 def add_user(username, password):
     """Adds a new user to the database."""
@@ -30,10 +30,15 @@ def delete_user(username):
             print(f"User '{username}' does not exist.")
             return
 
+        # Handle related records in the url_mapping table
+        related_urls = URLMapping.query.filter_by(user_id=user.id).all()
+        for url in related_urls:
+            db.session.delete(url)  # or update as needed
+
         db.session.delete(user)
         db.session.commit()
 
-        print(f"User '{username}' deleted successfully.")
+        print(f"User '{username}' and all related records deleted successfully.")
 
 def list_users():
     """Lists all users in the database."""
