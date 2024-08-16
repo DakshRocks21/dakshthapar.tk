@@ -11,33 +11,7 @@
 <body class="bg-gray-100 text-gray-800 flex">
     <!-- Sidebar -->
     {% if current_user.is_authenticated %}
-    <div class="w-64 h-screen bg-indigo-800 text-white">
-        <div class="p-6">
-            <h1 class="text-2xl font-semibold">URL Shortener</h1>
-        </div>
-        <nav class="mt-10">
-            <a href="{{ url_for('main.dashboard') }}"
-                class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'main.home' else '' }}">
-                Dashboard
-            </a>
-            <a href="{{ url_for('main.home') }}"
-                class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'main.view_urls' else '' }}">
-                Add URL
-            </a>
-            <a href="{{ url_for('main.view_urls') }}"
-                class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'main.view_urls' else '' }}">
-                My URLs
-            </a>
-            <a href="{{ url_for('main.all_logs') }}"
-                class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'main.all_logs' else '' }}">
-                All URL Logs
-            </a>
-            <a href="{{ url_for('main.logout') }}"
-                class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700">
-                Logout
-            </a>
-        </nav>
-    </div>
+    {% include 'sidebar.html' %}
     {% endif %}
 
     <!-- Main Content -->
