@@ -8,12 +8,42 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 text-gray-800">
-    <div class="container mx-auto px-4">
+<body class="bg-gray-100 text-gray-800 flex">
+    <!-- Sidebar -->
+    {% if current_user.is_authenticated %}
+    <div class="w-64 h-screen bg-indigo-800 text-white">
+        <div class="p-6">
+            <h1 class="text-2xl font-semibold">URL Shortener</h1>
+        </div>
+        <nav class="mt-10">
+            <a href="{{ url_for('main.home') }}"
+                class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'main.home' else '' }}">
+                Home
+            </a>
+            <a href="{{ url_for('main.view_urls') }}"
+                class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'main.view_urls' else '' }}">
+                My URLs
+            </a>
+            <a href="{{ url_for('main.all_logs') }}"
+                class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'main.all_logs' else '' }}">
+                All URL Logs
+            </a>
+            <a href="{{ url_for('main.logout') }}"
+                class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700">
+                Logout
+            </a>
+        </nav>
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8">
+        <!-- Header -->
         <nav class="bg-white p-6 shadow-md mb-8">
             <h1 class="text-2xl font-bold text-center">{% block header %}URL Shortener{% endblock %}</h1>
         </nav>
 
+        <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
         <div class="mb-4">
@@ -26,14 +56,14 @@
         {% endif %}
         {% endwith %}
 
+        <!-- Main Content Block -->
         <main>
             {% block content %}{% endblock %}
         </main>
 
+        <!-- Footer -->
         <footer class="text-center py-4">
             <p>&copy; 2024 URL Shortener</p>
         </footer>
     </div>
 </body>
-
-</html>

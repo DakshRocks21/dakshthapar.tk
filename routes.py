@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, URLMapping
+from models import Click, db, User, URLMapping
 import string
 import random
+import requests
+
 
 main = Blueprint('main', __name__)
 
@@ -116,11 +118,45 @@ def view_urls():
     urls = URLMapping.query.filter_by(user_id=current_user.id).all()
     return render_template('urls.html', urls=urls)
 
+def get_country_from_ip(ip_address):
+    try:
+        response = requests.get(f"http://ip-api.com/json/{ip_address}")
+        data = response.json()
+        return data.get('country', 'Unknown')
+    except:
+        return 'Unknown'
+
 @main.route('/<short_url>')
 def redirect_url(short_url):
     url_mapping = URLMapping.query.filter_by(short_url=short_url).first() or URLMapping.query.filter_by(custom_url=short_url).first()
     
     if url_mapping:
+        # Track the click
+        ip_address = request.remote_addr
+        country = get_country_from_ip(ip_address)
+        user_agent = request.headers.get('User-Agent')
+
+        click = Click(ip_address=ip_address, country=country, user_agent=user_agent, url_mapping=url_mapping)
+        db.session.add(click)
+        db.session.commit()
+
         return redirect(url_mapping.original_url)
     else:
         return "URL not found", 404
+    
+@main.route('/url/<int:url_id>')
+@login_required
+def url_stats(url_id):
+    url_mapping = URLMapping.query.get_or_404(url_id)
+    
+    if url_mapping.user_id != current_user.id:
+        flash('You do not have access to this URL\'s statistics.', 'danger')
+        return redirect(url_for('main.view_urls'))
+    
+    return render_template('url_stats.html', url_mapping=url_mapping)
+
+@main.route('/url/logs')
+@login_required
+def all_logs():
+    urls = URLMapping.query.filter_by(user_id=current_user.id).all()
+    return render_template('all_logs.html', urls=urls)

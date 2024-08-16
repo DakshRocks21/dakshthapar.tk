@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}URL Statistics{% endblock %}
+
+{% block header %}Statistics for {{ url_mapping.short_url }}{% endblock %}
+
+{% block content %}
+<div class="bg-white p-8 shadow-md rounded">
+    <h2 class="text-xl font-semibold mb-4">Statistics for {{ url_mapping.short_url }}</h2>
+
+    <table class="min-w-full bg-white border border-gray-300 mb-4">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 border-b border-gray-300">Timestamp</th>
+                <th class="py-2 px-4 border-b border-gray-300">IP Address</th>
+                <th class="py-2 px-4 border-b border-gray-300">Country</th>
+                <th class="py-2 px-4 border-b border-gray-300">User Agent</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for click in url_mapping.clicks %}
+            <tr>
+                <td class="py-2 px-4 border-b border-gray-300">{{ click.timestamp }}</td>
+                <td class="py-2 px-4 border-b border-gray-300">{{ click.ip_address }}</td>
+                <td class="py-2 px-4 border-b border-gray-300">{{ click.country }}</td>
+                <td class="py-2 px-4 border-b border-gray-300">{{ click.user_agent }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('main.view_urls') }}" class="text-indigo-600 hover:underline">Back to My URLs</a>
+</div>
+{% endblock %}

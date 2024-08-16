@@ -33,6 +33,10 @@
                             class="bg-indigo-600 text-white py-1 px-3 rounded hover:bg-indigo-700 transition duration-200">
                             Update
                         </button>
+                        <a href="{{ url_for('main.url_stats', url_id=url.id) }}"
+                            class="bg-blue-600 text-white py-1 px-3 ml-2 rounded hover:bg-blue-700 transition duration-200">
+                            Stats
+                        </a>
                         <a href="{{ url_for('main.redirect_url', short_url=url.short_url) }}" target="_blank"
                             class="bg-green-600 text-white py-1 px-3 ml-2 rounded hover:bg-green-700 transition duration-200">
                             Open
