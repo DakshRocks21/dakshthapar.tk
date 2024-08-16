@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block header %}My Dashboard{% endblock %}
+
+{% block content %}
+<div class="bg-white p-8 shadow-md rounded">
+    <h2 class="text-xl font-semibold mb-4">Dashboard</h2>
+
+    <!-- Total Clicks -->
+    <div class="mb-4">
+        <h3 class="text-lg font-semibold">Total Clicks: {{ total_clicks }}</h3>
+    </div>
+
+    <!-- Clicks Per URL -->
+    <div class="mb-4">
+        <h3 class="text-lg font-semibold">Clicks Per URL</h3>
+        <table class="min-w-full bg-white border border-gray-300 mb-4">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b border-gray-300">Short URL</th>
+                    <th class="py-2 px-4 border-b border-gray-300">Clicks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for short_url, clicks in clicks_per_url.items() %}
+                <tr>
+                    <td class="py-2 px-4 border-b border-gray-300">{{ short_url }}</td>
+                    <td class="py-2 px-4 border-b border-gray-300">{{ clicks }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Clicks by Country -->
+    <div>
+        <h3 class="text-lg font-semibold">Clicks by Country</h3>
+        <table class="min-w-full bg-white border border-gray-300 mb-4">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b border-gray-300">Country</th>
+                    <th class="py-2 px-4 border-b border-gray-300">Clicks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for country, clicks in clicks_by_country.items() %}
+                <tr>
+                    <td class="py-2 px-4 border-b border-gray-300">{{ country }}</td>
+                    <td class="py-2 px-4 border-b border-gray-300">{{ clicks }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Back to URLs -->
+    <a href="{{ url_for('main.view_urls') }}" class="text-indigo-600 hover:underline">Back to My URLs</a>
+</div>
+{% endblock %}

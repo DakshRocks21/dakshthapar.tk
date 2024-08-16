@@ -34,24 +34,12 @@ def login():
 
     return render_template('login.html')
 
+
 @main.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        hashed_password = generate_password_hash(password)
+    flash('Signups are disabled.', 'danger')
+    return redirect(url_for('main.login'))
 
-        user = User(username=username, password=hashed_password)
-        db.session.add(user)
-        db.session.commit()
-
-        flash('Account created successfully! You can now log in.', 'success')
-        return redirect(url_for('main.login'))
-
-    return render_template('signup.html')
 
 @main.route('/logout')
 @login_required
@@ -108,10 +96,15 @@ def view_urls():
                 if existing_custom and existing_custom.id != url_mapping.id:
                     flash('Custom URL already exists, please choose another one.', 'danger')
                 else:
-                    url_mapping.custom_url = short_url
-                    url_mapping.short_url = short_url
+                    # if no change in any field, don't update the short_url
+                    if url_mapping.custom_url != short_url:
+                        url_mapping.custom_url = short_url
+                        url_mapping.short_url = short_url
+                        flash('URL updated successfully!', 'success')
+                    else:
+                        flash('No changes made!', 'info')
             db.session.commit()
-            flash('URL updated successfully!', 'success')
+            
 
         return redirect(url_for('main.view_urls'))
 
@@ -160,3 +153,21 @@ def url_stats(url_id):
 def all_logs():
     urls = URLMapping.query.filter_by(user_id=current_user.id).all()
     return render_template('all_logs.html', urls=urls)
+
+@main.route('/dashboard')
+@login_required
+def dashboard():
+    urls = URLMapping.query.filter_by(user_id=current_user.id).all()
+    
+    # Aggregating statistics
+    total_clicks = sum(len(url.clicks) for url in urls)
+    clicks_per_url = {url.short_url: len(url.clicks) for url in urls}
+
+    # You can also add more detailed statistics like:
+    clicks_by_country = {}
+    for url in urls:
+        for click in url.clicks:
+            country = click.country
+            clicks_by_country[country] = clicks_by_country.get(country, 0) + 1
+
+    return render_template('dashboard.html', urls=urls, total_clicks=total_clicks, clicks_per_url=clicks_per_url, clicks_by_country=clicks_by_country)

@@ -16,9 +16,13 @@
             <h1 class="text-2xl font-semibold">URL Shortener</h1>
         </div>
         <nav class="mt-10">
-            <a href="{{ url_for('main.home') }}"
+            <a href="{{ url_for('main.dashboard') }}"
                 class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'main.home' else '' }}">
-                Home
+                Dashboard
+            </a>
+            <a href="{{ url_for('main.home') }}"
+                class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'main.view_urls' else '' }}">
+                Add URL
             </a>
             <a href="{{ url_for('main.view_urls') }}"
                 class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'main.view_urls' else '' }}">
@@ -46,16 +50,37 @@
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
-        <div class="mb-4">
+        <div id="flash-messages" class="fixed bottom-4 right-4 space-y-4">
+            {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
             {% for category, message in messages %}
-            <div class="p-4 mb-4 text-white bg-{{ 'green' if category == 'success' else 'red' }}-500 rounded">
+            <div class="flash-message p-4 text-white bg-{{
+                'green' if category == 'success' else
+                'red' if category == 'error' else
+                'blue' if category == 'info' else
+                'gray'
+            }}-500 rounded shadow-lg">
+
                 {{ message }}
             </div>
             {% endfor %}
+            {% endif %}
+            {% endwith %}
         </div>
         {% endif %}
         {% endwith %}
-
+        <script>
+            // Automatically fade out flash messages after 3 seconds
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(function () {
+                    let flashMessages = document.getElementById('flash-messages');
+                    if (flashMessages) {
+                        flashMessages.classList.add('opacity-0');
+                        setTimeout(() => flashMessages.remove(), 500);  // Remove from DOM after fade-out
+                    }
+                }, 3000);
+            });
+        </script>
         <!-- Main Content Block -->
         <main>
             {% block content %}{% endblock %}
