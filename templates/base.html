@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}URL Shortener{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 text-gray-800 flex">
+    <!-- Sidebar -->
+    {% if current_user.is_authenticated %}
+    {% include 'sidebar.html' %}
+    {% endif %}
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8">
+        <!-- Header -->
+        <nav class="bg-white p-6 shadow-md mb-8">
+            <h1 class="text-2xl font-bold text-center">{% block header %}URL Shortener{% endblock %}</h1>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+        <div id="flash-messages" class="fixed bottom-4 right-4 space-y-4">
+            {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash-message p-4 text-white bg-{{
+                'green' if category == 'success' else
+                'red' if category == 'error' else
+                'blue' if category == 'info' else
+                'gray'
+            }}-500 rounded shadow-lg">
+
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        <script>
+            // Automatically fade out flash messages after 3 seconds
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(function () {
+                    let flashMessages = document.getElementById('flash-messages');
+                    if (flashMessages) {
+                        flashMessages.classList.add('opacity-0');
+                        setTimeout(() => flashMessages.remove(), 500);  // Remove from DOM after fade-out
+                    }
+                }, 3000);
+            });
+        </script>
+        <!-- Main Content Block -->
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center py-4">
+            <p>&copy; 2024 URL Shortener</p>
+        </footer>
+    </div>
+</body>

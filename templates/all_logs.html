@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}All URL Logs{% endblock %}
+
+{% block content %}
+<div class="mx-auto bg-white p-8 shadow-md rounded">
+    <h2 class="text-xl font-semibold mb-4">All URL Logs</h2>
+
+    {% for url in urls %}
+    <h3 class="text-lg font-semibold mb-2">{{ url.short_url }}</h3>
+    <table class="min-w-full bg-white border border-gray-300 mb-4">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 border-b border-gray-300">Timestamp</th>
+                <th class="py-2 px-4 border-b border-gray-300">IP Address</th>
+                <th class="py-2 px-4 border-b border-gray-300">Country</th>
+                <th class="py-2 px-4 border-b border-gray-300">User Agent</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for click in url.clicks %}
+            <tr>
+                <td class="py-2 px-4 border-b border-gray-300">{{ click.timestamp }}</td>
+                <td class="py-2 px-4 border-b border-gray-300">{{ click.ip_address }}</td>
+                <td class="py-2 px-4 border-b border-gray-300">{{ click.country }}</td>
+                <td class="py-2 px-4 border-b border-gray-300">{{ click.user_agent }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endfor %}
+</div>
+{% endblock %}
