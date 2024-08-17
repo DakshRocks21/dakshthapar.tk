@@ -9,6 +9,22 @@ class User(db.Model):
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
     urls = db.relationship('URLMapping', backref='user', lazy=True, cascade="all, delete-orphan")
+    
+    @property 
+    def is_active(self):
+        # If you don't have an "active" column, just return True
+        return True    
+    @property 
+    def is_authenticated(self):
+        # Always returns True because the presence of the user object indicates the user is authenticated
+        return True
+    @property
+    def is_anonymous(self):
+        # Return False because a valid user object indicates the user is not anonymous
+        return False
+    
+    def get_id(self):
+        return str(self.id)
 class URLMapping(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     short_url = db.Column(db.String(6), unique=True, nullable=False)
