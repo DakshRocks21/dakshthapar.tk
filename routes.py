@@ -123,6 +123,29 @@ def get_country_from_ip(ip_address):
         return data.get('country', 'Unknown')
     except:
         return 'Unknown'
+@main.route('/admin/urls')
+@login_required
+def admin_urls():
+    if current_user.id != 1:
+        flash('You do not have permission to access this page.', 'danger')
+        return redirect(url_for('main.home'))
+
+    # Query to get all URLs along with the user who created them and the number of clicks
+    urls = URLMapping.query.all()
+    url_data = []
+
+    for url in urls:
+        user = User.query.get(url.user_id)
+        clicks_count = Click.query.filter_by(url_mapping_id=url.id).count()
+        url_data.append({
+            'short_url': url.short_url,
+            'original_url': url.original_url,
+            'created_by': user.username if user else'Unknown',
+            'created_at': url.created_at,
+            'clicks_count': clicks_count
+        })
+
+    return render_template('admin_urls.html', url_data=url_data)
 
 @main.route('/<short_url>')
 def redirect_url(short_url):
