@@ -5,7 +5,7 @@ from sqlalchemy import DateTime
 
 db = SQLAlchemy()
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
@@ -14,11 +14,13 @@ class User(db.Model):
     @property 
     def is_active(self):
         # If you don't have an "active" column, just return True
-        return True    
+        return True
+    
     @property 
     def is_authenticated(self):
         # Always returns True because the presence of the user object indicates the user is authenticated
         return True
+    
     @property
     def is_anonymous(self):
         # Return False because a valid user object indicates the user is not anonymous
@@ -26,7 +28,7 @@ class User(db.Model):
     
     def get_id(self):
         return str(self.id)
-    
+
 class URLMapping(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     short_url = db.Column(db.String(6), unique=True, nullable=False)
@@ -43,5 +45,3 @@ class Click(db.Model):
     country = db.Column(db.String(100))
     user_agent = db.Column(db.String(500))
     url_mapping_id = db.Column(db.Integer, db.ForeignKey('url_mapping.id'), nullable=False, name='fk_click_url_mapping_id')
-    url_mapping = db.relationship('URLMapping', back_populates='clicks')
-
