@@ -41,7 +41,7 @@ class Click(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     ip_address = db.Column(db.String(45), nullable=False)  # Supports IPv4 and IPv6
     country = db.Column(db.String(100))
-    user_agent = db.Column(db.String(256))
-    url_mapping_id = db.Column(db.Integer, db.ForeignKey('url_mapping.id'), nullable=False)
+    user_agent = db.Column(db.String(500))
+    url_mapping_id = db.Column(db.Integer, db.ForeignKey('url_mapping.id'), nullable=False, name='fk_click_url_mapping_id')
     url_mapping = db.relationship('URLMapping', back_populates='clicks')
 
