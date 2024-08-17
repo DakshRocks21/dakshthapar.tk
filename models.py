@@ -2,7 +2,6 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from sqlalchemy import DateTime
-import datetime
 
 db = SQLAlchemy()
 
@@ -32,7 +31,7 @@ class URLMapping(db.Model):
     short_url = db.Column(db.String(6), unique=True, nullable=False)
     original_url = db.Column(db.String(2048), nullable=False)
     custom_url = db.Column(db.String(64), unique=True)
-    created_at = db.Column(DateTime, default=datetime.datetime())
+    created_at = db.Column(DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     clicks = db.relationship('Click', backref='url_mapping', lazy=True)
 
