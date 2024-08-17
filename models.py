@@ -26,6 +26,7 @@ class User(db.Model):
     
     def get_id(self):
         return str(self.id)
+    
 class URLMapping(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     short_url = db.Column(db.String(6), unique=True, nullable=False)
@@ -41,4 +42,6 @@ class Click(db.Model):
     ip_address = db.Column(db.String(45), nullable=False)  # Supports IPv4 and IPv6
     country = db.Column(db.String(100))
     user_agent = db.Column(db.String(256))
-    url_id = db.Column(db.Integer, db.ForeignKey('url_mapping.id'), nullable=False)
+    url_mapping_id = db.Column(db.Integer, db.ForeignKey('url_mapping.id'), nullable=False)
+    url_mapping = db.relationship('URLMapping', back_populates='clicks')
+

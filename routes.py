@@ -123,6 +123,7 @@ def get_country_from_ip(ip_address):
         return data.get('country', 'Unknown')
     except:
         return 'Unknown'
+    
 @main.route('/admin/urls')
 @login_required
 def admin_urls():
