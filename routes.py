@@ -23,7 +23,9 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(username=username).first()
+
+        # Use parameterized query
+        user = User.query.filter(User.username == username).first()
 
         if user and check_password_hash(user.password, password):
             login_user(user)
@@ -95,6 +97,9 @@ def view_urls():
                 existing_custom = URLMapping.query.filter_by(custom_url=short_url).first()
                 if existing_custom and existing_custom.id != url_mapping.id:
                     flash('Custom URL already exists, please choose another one.', 'danger')
+                # check for blacklisted words
+                elif any(word in short_url for word in ['admin', 'dashboard', 'login', 'signup', 'logout', 'url', 'urls', ":", "/", "?", "&", "=", "#", "!", "@", "$", "%", "^", "&", "*", "(", ")", "{", "}", "[", "]", "<", ">", "|", "\\", ";", "'", '"', "`", "~", ",", ".", " ", "\t", "\n", "\r", "\f", "\v"]):
+                    flash('Custom URL contains blacklisted words. Please choose another one.', 'danger')
                 else:
                     # if no change in any field, don't update the short_url
                     if url_mapping.custom_url != short_url:
@@ -121,7 +126,11 @@ def get_country_from_ip(ip_address):
 
 @main.route('/<short_url>')
 def redirect_url(short_url):
-    url_mapping = URLMapping.query.filter_by(short_url=short_url).first() or URLMapping.query.filter_by(custom_url=short_url).first()
+    # Use parameterized queries
+    url_mapping = URLMapping.query.filter(
+        (URLMapping.short_url == short_url) | 
+        (URLMapping.custom_url == short_url)
+    ).first()
     
     if url_mapping:
         # Track the click
@@ -135,7 +144,7 @@ def redirect_url(short_url):
 
         return redirect(url_mapping.original_url)
     else:
-        return "URL not found", 404
+        return render_template('404.html'), 404
     
 @main.route('/url/<int:url_id>')
 @login_required
